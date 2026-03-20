@@ -1,16 +1,53 @@
-# React + Vite
+# 🛠 News Admin Panel (CMS Dashboard)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A powerful admin dashboard built with React that allows administrators to manage news content, fetch latest articles, and control the platform.
 
-Currently, two official plugins are available:
+This panel acts as the control center for the entire news system.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Live Admin Panel
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+👉 https://your-admin-url.vercel.app
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📌 Overview
+
+The Admin Panel is designed to:
+
+- Authenticate admin users
+- Fetch latest news from external APIs
+- View and manage stored articles
+- Control backend operations
+
+It connects directly with the backend API using JWT authentication.
+
+---
+
+## 🛠 Tech Stack
+
+- ⚛️ React (Vite)
+- 🌐 Axios
+- 🧭 React Router DOM
+- 🎨 CSS / Custom UI
+
+---
+
+## ✨ Features
+
+- 🔐 Secure Admin Login (JWT)
+- 📊 Dashboard Overview
+- 📰 View All News Articles
+- 🔄 Fetch Latest News (by category)
+- 📂 Category-based management
+- ⚡ Real-time API integration
+- 🚀 Fast & responsive UI
+
+---
+
+## 🔐 Admin Credentials
+
+```env
+Email: admin@news.com
+Password: adminpassword
