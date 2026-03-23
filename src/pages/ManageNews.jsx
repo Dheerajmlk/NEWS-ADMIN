@@ -1,46 +1,42 @@
-import { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+import { useState } from "react";
 import api from "../services/api";
-import NewsCard from "../components/NewsCard";
 
-function ManageNews() {
-  const [news, setNews] = useState([]);
+const ManageNews = () => {
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    image: "",
+    url: "",
+    category: "general"
+  });
 
-  const load = async () => {
-    const res = await api.get("/news?limit=50");
-    setNews(res.data.data);
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const deleteNews = async (id) => {
-    await api.delete(`/news/${id}`);
-    load();
+  const handleSubmit = async () => {
+    try {
+      await api.post("/news/create", form);
+      alert("News added successfully");
+    } catch (err) {
+      console.log(err);
+      alert("Error adding news");
+    }
   };
-
-  useEffect(() => {
-    load();
-  }, []);
 
   return (
-    <div style={{ display: "flex" }}>
-      <Sidebar />
+    <div>
+      <h2>Add News</h2>
 
-      <div style={{ flex: 1 }}>
-        <Header />
+      <input name="title" placeholder="Title" onChange={handleChange} />
+      <input name="description" placeholder="Description" onChange={handleChange} />
+      <input name="image" placeholder="Image URL" onChange={handleChange} />
+      <input name="url" placeholder="News Link" onChange={handleChange} />
+      <input name="category" placeholder="Category" onChange={handleChange} />
 
-        <div style={{
-          padding: "20px",
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "20px"
-        }}>
-          {news.map((item) => (
-            <NewsCard key={item._id} item={item} onDelete={deleteNews} />
-          ))}
-        </div>
-      </div>
+      <button onClick={handleSubmit}>Add News</button>
     </div>
   );
-}
+};
 
 export default ManageNews;
