@@ -1,84 +1,124 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import api from "../services/api";
 
 function FetchNews() {
-    const [loading, setLoading] = useState(false);
-    const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [logs, setLogs] = useState([]);
+  const [news, setNews] = useState([]);
 
-    const fetchData = async (category) => {
-        try {
-            setLoading(true);
+  // ✅ LOAD EXISTING NEWS
+  const loadNews = async () => {
+    const res = await api.get("/news?limit=20");
+    setNews(res.data.data);
+  };
 
-            const res = await api.post(`/news/fetch?category=${category}`);
+  useEffect(() => {
+    loadNews();
+  }, []);
 
-            const newLog = {
-                category,
-                message: res.data.message,
-                inserted: res.data.inserted,
-                time: new Date().toLocaleTimeString()
-            };
+  // ✅ FETCH FROM API
+  const fetchData = async (category) => {
+    try {
+      setLoading(true);
 
-            setLogs((prev) => [newLog, ...prev]);
+      const res = await api.post(`/fetch?category=${category}`);
 
-        } catch (err) {
-            console.log("FULL ERROR:", err);
-            console.log("ERROR RESPONSE:", err.response?.data);
-            alert("Error fetching news");
-        } finally {
-            setLoading(false);
-        }
-    };
+      const newLog = {
+        category,
+        message: res.data.message,
+        inserted: res.data.inserted,
+        time: new Date().toLocaleTimeString()
+      };
 
-    return (
-        <div style={{ display: "flex" }}>
-            <Sidebar />
+      setLogs((prev) => [newLog, ...prev]);
 
-            <div style={{ flex: 1 }}>
-                <Header />
+      // 🔥 reload news after fetch
+      loadNews();
 
-                <div style={{ padding: "20px" }}>
-                    <h2>Fetch News</h2>
+    } catch (err) {
+      console.log(err);
+      alert("Error fetching news");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                    {/* 🔥 BUTTONS */}
-                    <div style={{ marginBottom: "20px" }}>
-                        {["general", "technology", "sports", "business"].map((cat) => (
-                            <button
-                                key={cat}
-                                onClick={() => fetchData(cat)}
-                                disabled={loading}
-                                style={{ marginRight: "10px" }}
-                            >
-                                {loading ? "Fetching..." : `Fetch ${cat}`}
-                            </button>
-                        ))}
-                    </div>
+  // ✅ DELETE NEWS
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/news/${id}`);
+      setNews((prev) => prev.filter(n => n._id !== id));
+    } catch (err) {
+      alert("Delete failed");
+    }
+  };
 
-                    {/* 🔥 LOGS SECTION */}
-                    <div>
-                        <h3>Fetch Logs</h3>
+  return (
+    <div style={{ display: "flex" }}>
+      <Sidebar />
 
-                        {logs.length === 0 && <p>No fetch activity yet</p>}
+      <div style={{ flex: 1 }}>
+        <Header />
 
-                        {logs.map((log, index) => (
-                            <div key={index} style={{
-                                border: "1px solid #ccc",
-                                padding: "10px",
-                                marginBottom: "10px"
-                            }}>
-                                <strong>{log.category.toUpperCase()}</strong> <br />
-                                {log.message} <br />
-                                Inserted: {log.inserted} <br />
-                                Time: {log.time}
-                            </div>
-                        ))}
-                    </div>
+        <div style={{ padding: "20px" }}>
+          <h2>Fetch News</h2>
 
+          {/* 🔥 FETCH BUTTONS */}
+          <div style={{ marginBottom: "20px" }}>
+            {["general", "technology", "sports", "business"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => fetchData(cat)}
+                disabled={loading}
+                style={{ marginRight: "10px" }}
+              >
+                {loading ? "Fetching..." : `Fetch ${cat}`}
+              </button>
+            ))}
+          </div>
+
+          {/* 🔥 LOGS */}
+          <div>
+            <h3>Fetch Logs</h3>
+            {logs.map((log, i) => (
+              <div key={i}>
+                {log.category} → {log.inserted}
+              </div>
+            ))}
+          </div>
+
+          {/* 🔥 NEWS LIST */}
+          <div style={{ marginTop: "30px" }}>
+            <h3>News List</h3>
+
+            {news.map((item) => (
+              <div key={item._id} style={{
+                display: "flex",
+                gap: "15px",
+                border: "1px solid #ccc",
+                padding: "10px",
+                marginBottom: "10px"
+              }}>
+                <img src={item.image} width="100" />
+
+                <div style={{ flex: 1 }}>
+                  <h4>{item.title}</h4>
+                  <small>{item.category}</small>
                 </div>
-            </div>
+
+                <button onClick={() => handleDelete(item._id)}>
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default FetchNews;

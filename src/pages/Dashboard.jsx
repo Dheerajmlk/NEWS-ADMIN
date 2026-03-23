@@ -14,17 +14,17 @@ function Dashboard() {
   const [recent, setRecent] = useState([]);
 
   const loadData = async () => {
-    const all = await api.get("/news?limit=100");
-    const data = all.data.data;
+    const res = await api.get("/news?limit=20");
+    const data = res.data.data;
 
     setStats({
-      total: all.data.total,
+      total: res.data.total,
       tech: data.filter(n => n.category === "technology").length,
       sports: data.filter(n => n.category === "sports").length,
       business: data.filter(n => n.category === "business").length,
     });
 
-    setRecent(data.slice(0, 5));
+    setRecent(data);
   };
 
   useEffect(() => {
@@ -40,29 +40,37 @@ function Dashboard() {
 
         <div style={{ padding: "20px" }}>
           
-          {/* 🔥 STATS CARDS */}
+          {/* 🔥 STATS */}
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
             gap: "20px"
           }}>
-            <Card title="Total News" value={stats.total} />
-            <Card title="Technology" value={stats.tech} />
+            <Card title="Total" value={stats.total} />
+            <Card title="Tech" value={stats.tech} />
             <Card title="Sports" value={stats.sports} />
             <Card title="Business" value={stats.business} />
           </div>
 
-          {/* 🔥 RECENT NEWS */}
-          <div style={{ marginTop: "30px" }}>
-            <h3>Recent News</h3>
-
+          {/* 🔥 NEWS CARDS */}
+          <div style={{
+            marginTop: "30px",
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "20px"
+          }}>
             {recent.map((item) => (
               <div key={item._id} style={{
-                borderBottom: "1px solid #ccc",
-                padding: "10px 0"
+                border: "1px solid #ccc",
+                borderRadius: "10px",
+                overflow: "hidden"
               }}>
-                <h4>{item.title}</h4>
-                <small>{item.category}</small>
+                <img src={item.image} width="100%" height="150" />
+
+                <div style={{ padding: "10px" }}>
+                  <h4>{item.title}</h4>
+                  <small>{item.category}</small>
+                </div>
               </div>
             ))}
           </div>
